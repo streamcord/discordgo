@@ -2193,7 +2193,7 @@ type Activity struct {
 	Type          ActivityType `json:"type"`
 	URL           string       `json:"url,omitempty"`
 	CreatedAt     time.Time    `json:"created_at"`
-	ApplicationID string       `json:"application_id,omitempty"`
+	ApplicationID interface{}  `json:"application_id,omitempty"`
 	State         string       `json:"state,omitempty"`
 	Details       string       `json:"details,omitempty"`
 	Timestamps    TimeStamps   `json:"timestamps,omitempty"`
@@ -2212,7 +2212,7 @@ func (activity *Activity) UnmarshalJSON(b []byte) error {
 		Type          ActivityType `json:"type"`
 		URL           string       `json:"url,omitempty"`
 		CreatedAt     int64        `json:"created_at"`
-		ApplicationID string       `json:"application_id,omitempty"`
+		ApplicationID interface{}  `json:"application_id,omitempty"`
 		State         string       `json:"state,omitempty"`
 		Details       string       `json:"details,omitempty"`
 		Timestamps    TimeStamps   `json:"timestamps,omitempty"`
