@@ -31,6 +31,9 @@ var ErrStateNotFound = errors.New("state cache not found")
 var ErrMessageIncompletePermissions = errors.New("message incomplete, unable to determine permissions")
 
 // StateI is an interface that can be used to create custom state engines.
+// Check discordgo/state.go for an example implementation of this interface.
+//
+// WARNING: Custom implementations of this interface must be thread-safe!
 type StateI interface {
 	Channel(channelID string) (*Channel, error)
 	Guild(guildID string) (*Guild, error)
@@ -38,8 +41,12 @@ type StateI interface {
 	Role(guildID, roleID string) (*Role, error)
 	UserChannelPermissions(userID, channelID string) (int64, error)
 
+	// OnInterface is the receiver for all raw state events from the gateway.
+	// It must, at minimum, handle READY events to set the value behind SelfUser().
+	// Check discordgo/state.go for an example implementation of this function.
 	OnInterface(s *Session, i interface{}) error
 
+	// SelfUser is the bot user returned in the READY event payload.
 	SelfUser() *User
 }
 
