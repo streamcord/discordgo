@@ -92,7 +92,7 @@ type Session struct {
 
 	// Managed state object, updated internally with events when
 	// StateEnabled is true.
-	State *State
+	State StateI
 
 	// The http client used for REST requests
 	Client *http.Client

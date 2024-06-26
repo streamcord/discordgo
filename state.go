@@ -30,6 +30,19 @@ var ErrStateNotFound = errors.New("state cache not found")
 // generate the permissions.
 var ErrMessageIncompletePermissions = errors.New("message incomplete, unable to determine permissions")
 
+// StateI is an interface that can be used to create custom state engines.
+type StateI interface {
+	Channel(channelID string) (*Channel, error)
+	Guild(guildID string) (*Guild, error)
+	Member(guildID, userID string) (*Member, error)
+	Role(guildID, roleID string) (*Role, error)
+	UserChannelPermissions(userID, channelID string) (int64, error)
+
+	OnInterface(s *Session, i interface{}) error
+
+	SelfUser() *User
+}
+
 // A State contains the current known state.
 // As discord sends this in a READY blob, it seems reasonable to simply
 // use that struct as the data store.
@@ -72,6 +85,10 @@ func NewState() *State {
 		channelMap:         make(map[string]*Channel),
 		memberMap:          make(map[string]map[string]*Member),
 	}
+}
+
+func (s *State) SelfUser() *User {
+	return s.User
 }
 
 func (s *State) createMemberMap(guild *Guild) {
@@ -175,8 +192,9 @@ func (s *State) GuildRemove(guild *Guild) error {
 
 // Guild gets a guild by ID.
 // Useful for querying if @me is in a guild:
-//     _, err := discordgo.Session.State.Guild(guildID)
-//     isInGuild := err == nil
+//
+//	_, err := discordgo.Session.State.Guild(guildID)
+//	isInGuild := err == nil
 func (s *State) Guild(guildID string) (*Guild, error) {
 	if s == nil {
 		return nil, ErrNilState
@@ -950,7 +968,7 @@ func (s *State) onReady(se *Session, r *Ready) (err error) {
 
 // OnInterface handles all events related to states.
 func (s *State) OnInterface(se *Session, i interface{}) (err error) {
-	if s == nil {
+	if se.State == nil {
 		return ErrNilState
 	}
 
