@@ -1405,6 +1405,10 @@ type Role struct {
 	// This is a combination of bit masks; the presence of a certain flag can
 	// be checked by performing a bitwise AND between this int and the flag.
 	Flags RoleFlags `json:"flags"`
+
+	// Tthe tags this role has.
+	// https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
+	Tags map[string]interface{} `json:"tags,omitempty"`
 }
 
 // RoleFlags represent the flags of a Role.
