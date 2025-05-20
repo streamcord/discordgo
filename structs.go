@@ -1406,9 +1406,8 @@ type Role struct {
 	// be checked by performing a bitwise AND between this int and the flag.
 	Flags RoleFlags `json:"flags"`
 
-	// Tthe tags this role has.
-	// https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
-	Tags map[string]interface{} `json:"tags,omitempty"`
+	// The tags this role has.
+	Tags RoleTags `json:"tags,omitempty"`
 }
 
 // RoleFlags represent the flags of a Role.
@@ -1420,6 +1419,49 @@ const (
 	// RoleFlagInPrompt indicates whether the Role is selectable by members in an onboarding prompt.
 	RoleFlagInPrompt RoleFlags = 1 << 0
 )
+
+// RoleTags represent the tags of a role.
+// https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
+type RoleTags map[string]interface{}
+
+// BotID returns the ID of the bot this role belongs to.
+// `ok` is false if the role is not managed by a bot.
+func (t RoleTags) BotID() (botID string, ok bool) {
+	botID, ok = t["bot_id"].(string)
+	return
+}
+
+// IntegrationID returns the ID of the integration this role belongs to.
+// `ok` is false if the role is not managed by an integration.
+func (t RoleTags) IntegrationID() (integrationID string, ok bool) {
+	integrationID, ok = t["integration_id"].(string)
+	return
+}
+
+// PremiumSubscriber returns whether this is the guild's Booster role.
+func (t RoleTags) PremiumSubscriber() bool {
+	_, ok := t["premium_subscriber"]
+	return ok
+}
+
+// IntegrationID returns the ID of this role's subscription SKU and listing.
+// `ok` is false if this role does not have an associated subscription.
+func (t RoleTags) SubscriptionListingID() (subscriptionListingID string, ok bool) {
+	subscriptionListingID, ok = t["subscription_listing_id"].(string)
+	return
+}
+
+// AvailableForPurchase returns whether this role is available for purchase.
+func (t RoleTags) AvailableForPurchase() bool {
+	_, ok := t["available_for_purchase"]
+	return ok
+}
+
+// GuildConnections returns whether this role is a guild's linked role.
+func (t RoleTags) GuildConnections() bool {
+	_, ok := t["guild_connections"]
+	return ok
+}
 
 // Mention returns a string which mentions the role
 func (r *Role) Mention() string {
@@ -1441,6 +1483,35 @@ func (r *Role) IconURL(size string) string {
 		return URL + "?size=" + size
 	}
 	return URL
+}
+
+// IsBotManaged returns whether the role is associated with a bot.
+func (r *Role) IsBotManaged() bool {
+	if r.Tags == nil {
+		return false
+	}
+
+	_, ok := r.Tags.BotID()
+	return ok
+}
+
+// IsIntegration returns whether the role is managed by an integration.
+func (r *Role) IsIntegration() bool {
+	if r.Tags == nil {
+		return false
+	}
+
+	_, ok := r.Tags.IntegrationID()
+	return ok
+}
+
+// IsPremiumSubscriber returns whether the role is the premium subscriber role for the guild.
+func (r *Role) IsPremiumSubscriber() bool {
+	if r.Tags == nil {
+		return false
+	}
+
+	return r.Tags.PremiumSubscriber()
 }
 
 // RoleParams represents the parameters needed to create or update a Role
