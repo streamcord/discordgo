@@ -52,6 +52,10 @@ type Session struct {
 	// https://discord.com/developers/docs/topics/gateway#identify
 	Identify Identify
 
+	// BeforeIdentifyHook is called before sending an IDENTIFY packet.
+	// Useful for coordinating connections between multiuple clients.
+	BeforeIdentifyHook func(*Session)
+
 	// TODO: Remove Below, Deprecated, Use Identify struct
 	// Should the session request compressed websocket data.
 	Compress bool

@@ -134,6 +134,10 @@ func (s *Session) Open() error {
 	// Now we send either an Op 2 Identity if this is a brand new
 	// connection or Op 6 Resume if we are resuming an existing connection.
 	if s.sessionID == "" && sequence == 0 {
+		// Allow delaying the IDENTIFY packet
+		if s.BeforeIdentifyHook != nil {
+			s.BeforeIdentifyHook(s)
+		}
 
 		// Send Op 2 Identity Packet
 		err = s.identify()
