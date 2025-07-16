@@ -1462,46 +1462,6 @@ func (eh userUpdateEventHandler) Handle(s *Session, i interface{}) {
 	}
 }
 
-// voiceServerUpdateEventHandler is an event handler for VoiceServerUpdate events.
-type voiceServerUpdateEventHandler func(*Session, *VoiceServerUpdate)
-
-// Type returns the event type for VoiceServerUpdate events.
-func (eh voiceServerUpdateEventHandler) Type() string {
-	return voiceServerUpdateEventType
-}
-
-// New returns a new instance of VoiceServerUpdate.
-func (eh voiceServerUpdateEventHandler) New() interface{} {
-	return &VoiceServerUpdate{}
-}
-
-// Handle is the handler for VoiceServerUpdate events.
-func (eh voiceServerUpdateEventHandler) Handle(s *Session, i interface{}) {
-	if t, ok := i.(*VoiceServerUpdate); ok {
-		eh(s, t)
-	}
-}
-
-// voiceStateUpdateEventHandler is an event handler for VoiceStateUpdate events.
-type voiceStateUpdateEventHandler func(*Session, *VoiceStateUpdate)
-
-// Type returns the event type for VoiceStateUpdate events.
-func (eh voiceStateUpdateEventHandler) Type() string {
-	return voiceStateUpdateEventType
-}
-
-// New returns a new instance of VoiceStateUpdate.
-func (eh voiceStateUpdateEventHandler) New() interface{} {
-	return &VoiceStateUpdate{}
-}
-
-// Handle is the handler for VoiceStateUpdate events.
-func (eh voiceStateUpdateEventHandler) Handle(s *Session, i interface{}) {
-	if t, ok := i.(*VoiceStateUpdate); ok {
-		eh(s, t)
-	}
-}
-
 // webhooksUpdateEventHandler is an event handler for WebhooksUpdate events.
 type webhooksUpdateEventHandler func(*Session, *WebhooksUpdate)
 
@@ -1666,10 +1626,6 @@ func handlerForInterface(handler interface{}) EventHandler {
 		return typingStartEventHandler(v)
 	case func(*Session, *UserUpdate):
 		return userUpdateEventHandler(v)
-	case func(*Session, *VoiceServerUpdate):
-		return voiceServerUpdateEventHandler(v)
-	case func(*Session, *VoiceStateUpdate):
-		return voiceStateUpdateEventHandler(v)
 	case func(*Session, *WebhooksUpdate):
 		return webhooksUpdateEventHandler(v)
 	}
@@ -1678,25 +1634,25 @@ func handlerForInterface(handler interface{}) EventHandler {
 }
 
 func init() {
-	registerInterfaceProvider(applicationCommandPermissionsUpdateEventHandler(nil))
-	registerInterfaceProvider(autoModerationActionExecutionEventHandler(nil))
-	registerInterfaceProvider(autoModerationRuleCreateEventHandler(nil))
-	registerInterfaceProvider(autoModerationRuleDeleteEventHandler(nil))
-	registerInterfaceProvider(autoModerationRuleUpdateEventHandler(nil))
+	// registerInterfaceProvider(applicationCommandPermissionsUpdateEventHandler(nil))
+	// registerInterfaceProvider(autoModerationActionExecutionEventHandler(nil))
+	// registerInterfaceProvider(autoModerationRuleCreateEventHandler(nil))
+	// registerInterfaceProvider(autoModerationRuleDeleteEventHandler(nil))
+	// registerInterfaceProvider(autoModerationRuleUpdateEventHandler(nil))
 	registerInterfaceProvider(channelCreateEventHandler(nil))
 	registerInterfaceProvider(channelDeleteEventHandler(nil))
-	registerInterfaceProvider(channelPinsUpdateEventHandler(nil))
+	// registerInterfaceProvider(channelPinsUpdateEventHandler(nil))
 	registerInterfaceProvider(channelUpdateEventHandler(nil))
-	registerInterfaceProvider(entitlementCreateEventHandler(nil))
-	registerInterfaceProvider(entitlementDeleteEventHandler(nil))
-	registerInterfaceProvider(entitlementUpdateEventHandler(nil))
-	registerInterfaceProvider(guildAuditLogEntryCreateEventHandler(nil))
-	registerInterfaceProvider(guildBanAddEventHandler(nil))
-	registerInterfaceProvider(guildBanRemoveEventHandler(nil))
+	// registerInterfaceProvider(entitlementCreateEventHandler(nil))
+	// registerInterfaceProvider(entitlementDeleteEventHandler(nil))
+	// registerInterfaceProvider(entitlementUpdateEventHandler(nil))
+	// registerInterfaceProvider(guildAuditLogEntryCreateEventHandler(nil))
+	// registerInterfaceProvider(guildBanAddEventHandler(nil))
+	// registerInterfaceProvider(guildBanRemoveEventHandler(nil))
 	registerInterfaceProvider(guildCreateEventHandler(nil))
 	registerInterfaceProvider(guildDeleteEventHandler(nil))
-	registerInterfaceProvider(guildEmojisUpdateEventHandler(nil))
-	registerInterfaceProvider(guildIntegrationsUpdateEventHandler(nil))
+	// registerInterfaceProvider(guildEmojisUpdateEventHandler(nil))
+	// registerInterfaceProvider(guildIntegrationsUpdateEventHandler(nil))
 	registerInterfaceProvider(guildMemberAddEventHandler(nil))
 	registerInterfaceProvider(guildMemberRemoveEventHandler(nil))
 	registerInterfaceProvider(guildMemberUpdateEventHandler(nil))
@@ -1704,47 +1660,45 @@ func init() {
 	registerInterfaceProvider(guildRoleCreateEventHandler(nil))
 	registerInterfaceProvider(guildRoleDeleteEventHandler(nil))
 	registerInterfaceProvider(guildRoleUpdateEventHandler(nil))
-	registerInterfaceProvider(guildScheduledEventCreateEventHandler(nil))
-	registerInterfaceProvider(guildScheduledEventDeleteEventHandler(nil))
-	registerInterfaceProvider(guildScheduledEventUpdateEventHandler(nil))
-	registerInterfaceProvider(guildScheduledEventUserAddEventHandler(nil))
-	registerInterfaceProvider(guildScheduledEventUserRemoveEventHandler(nil))
-	registerInterfaceProvider(guildStickersUpdateEventHandler(nil))
+	// registerInterfaceProvider(guildScheduledEventCreateEventHandler(nil))
+	// registerInterfaceProvider(guildScheduledEventDeleteEventHandler(nil))
+	// registerInterfaceProvider(guildScheduledEventUpdateEventHandler(nil))
+	// registerInterfaceProvider(guildScheduledEventUserAddEventHandler(nil))
+	// registerInterfaceProvider(guildScheduledEventUserRemoveEventHandler(nil))
+	// registerInterfaceProvider(guildStickersUpdateEventHandler(nil))
 	registerInterfaceProvider(guildUpdateEventHandler(nil))
-	registerInterfaceProvider(integrationCreateEventHandler(nil))
-	registerInterfaceProvider(integrationDeleteEventHandler(nil))
-	registerInterfaceProvider(integrationUpdateEventHandler(nil))
-	registerInterfaceProvider(interactionCreateEventHandler(nil))
-	registerInterfaceProvider(inviteCreateEventHandler(nil))
-	registerInterfaceProvider(inviteDeleteEventHandler(nil))
-	registerInterfaceProvider(messageCreateEventHandler(nil))
-	registerInterfaceProvider(messageDeleteEventHandler(nil))
-	registerInterfaceProvider(messageDeleteBulkEventHandler(nil))
-	registerInterfaceProvider(messagePollVoteAddEventHandler(nil))
-	registerInterfaceProvider(messagePollVoteRemoveEventHandler(nil))
-	registerInterfaceProvider(messageReactionAddEventHandler(nil))
-	registerInterfaceProvider(messageReactionRemoveEventHandler(nil))
-	registerInterfaceProvider(messageReactionRemoveAllEventHandler(nil))
-	registerInterfaceProvider(messageUpdateEventHandler(nil))
+	// registerInterfaceProvider(integrationCreateEventHandler(nil))
+	// registerInterfaceProvider(integrationDeleteEventHandler(nil))
+	// registerInterfaceProvider(integrationUpdateEventHandler(nil))
+	// registerInterfaceProvider(interactionCreateEventHandler(nil))
+	// registerInterfaceProvider(inviteCreateEventHandler(nil))
+	// registerInterfaceProvider(inviteDeleteEventHandler(nil))
+	// registerInterfaceProvider(messageCreateEventHandler(nil))
+	// registerInterfaceProvider(messageDeleteEventHandler(nil))
+	// registerInterfaceProvider(messageDeleteBulkEventHandler(nil))
+	// registerInterfaceProvider(messagePollVoteAddEventHandler(nil))
+	// registerInterfaceProvider(messagePollVoteRemoveEventHandler(nil))
+	// registerInterfaceProvider(messageReactionAddEventHandler(nil))
+	// registerInterfaceProvider(messageReactionRemoveEventHandler(nil))
+	// registerInterfaceProvider(messageReactionRemoveAllEventHandler(nil))
+	// registerInterfaceProvider(messageUpdateEventHandler(nil))
 	registerInterfaceProvider(presenceUpdateEventHandler(nil))
 	registerInterfaceProvider(presencesReplaceEventHandler(nil))
 	registerInterfaceProvider(readyEventHandler(nil))
 	registerInterfaceProvider(resumedEventHandler(nil))
-	registerInterfaceProvider(stageInstanceEventCreateEventHandler(nil))
-	registerInterfaceProvider(stageInstanceEventDeleteEventHandler(nil))
-	registerInterfaceProvider(stageInstanceEventUpdateEventHandler(nil))
-	registerInterfaceProvider(subscriptionCreateEventHandler(nil))
-	registerInterfaceProvider(subscriptionDeleteEventHandler(nil))
-	registerInterfaceProvider(subscriptionUpdateEventHandler(nil))
-	registerInterfaceProvider(threadCreateEventHandler(nil))
-	registerInterfaceProvider(threadDeleteEventHandler(nil))
-	registerInterfaceProvider(threadListSyncEventHandler(nil))
-	registerInterfaceProvider(threadMemberUpdateEventHandler(nil))
-	registerInterfaceProvider(threadMembersUpdateEventHandler(nil))
-	registerInterfaceProvider(threadUpdateEventHandler(nil))
-	registerInterfaceProvider(typingStartEventHandler(nil))
-	registerInterfaceProvider(userUpdateEventHandler(nil))
-	registerInterfaceProvider(voiceServerUpdateEventHandler(nil))
-	registerInterfaceProvider(voiceStateUpdateEventHandler(nil))
-	registerInterfaceProvider(webhooksUpdateEventHandler(nil))
+	// registerInterfaceProvider(stageInstanceEventCreateEventHandler(nil))
+	// registerInterfaceProvider(stageInstanceEventDeleteEventHandler(nil))
+	// registerInterfaceProvider(stageInstanceEventUpdateEventHandler(nil))
+	// registerInterfaceProvider(subscriptionCreateEventHandler(nil))
+	// registerInterfaceProvider(subscriptionDeleteEventHandler(nil))
+	// registerInterfaceProvider(subscriptionUpdateEventHandler(nil))
+	// registerInterfaceProvider(threadCreateEventHandler(nil))
+	// registerInterfaceProvider(threadDeleteEventHandler(nil))
+	// registerInterfaceProvider(threadListSyncEventHandler(nil))
+	// registerInterfaceProvider(threadMemberUpdateEventHandler(nil))
+	// registerInterfaceProvider(threadMembersUpdateEventHandler(nil))
+	// registerInterfaceProvider(threadUpdateEventHandler(nil))
+	// registerInterfaceProvider(typingStartEventHandler(nil))
+	// registerInterfaceProvider(userUpdateEventHandler(nil))
+	// registerInterfaceProvider(webhooksUpdateEventHandler(nil))
 }

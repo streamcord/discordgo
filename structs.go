@@ -81,18 +81,11 @@ type Session struct {
 	// Max number of REST API retries
 	MaxRestRetries int
 
-	// Status stores the current status of the websocket connection
-	// this is being tested, may stay, may go away.
-	status int32
-
 	// Whether the Voice Websocket is ready
 	VoiceReady bool // NOTE: Deprecated.
 
 	// Whether the UDP Connection is ready
 	UDPReady bool // NOTE: Deprecated
-
-	// Stores a mapping of guild id's to VoiceConnections
-	VoiceConnections map[string]*VoiceConnection
 
 	// Managed state object, updated internally with events when
 	// StateEnabled is true.
@@ -823,10 +816,10 @@ type Guild struct {
 	Roles []*Role `json:"roles"`
 
 	// A list of the custom emojis present in the guild.
-	Emojis []*Emoji `json:"emojis"`
+	// Emojis []*Emoji `json:"emojis"`
 
 	// A list of the custom stickers present in the guild.
-	Stickers []*Sticker `json:"stickers"`
+	// Stickers []*Sticker `json:"stickers"`
 
 	// A list of the members in the guild.
 	// This field is only present in GUILD_CREATE events and websocket
@@ -852,12 +845,12 @@ type Guild struct {
 	// A list of all active threads in the guild that current user has permission to view
 	// This field is only present in GUILD_CREATE events and websocket
 	// update events and thus is only present in state-cached guilds.
-	Threads []*Channel `json:"threads"`
+	// Threads []*Channel `json:"threads"`
 
 	// A list of voice states for the guild.
 	// This field is only present in GUILD_CREATE events and websocket
 	// update events, and thus is only present in state-cached guilds.
-	VoiceStates []*VoiceState `json:"voice_states"`
+	// VoiceStates []*VoiceState `json:"voice_states"`
 
 	// Whether this guild is currently unavailable (most likely due to outage).
 	// This field is only present in GUILD_CREATE events and websocket
@@ -871,7 +864,7 @@ type Guild struct {
 	NSFWLevel GuildNSFWLevel `json:"nsfw_level"`
 
 	// The list of enabled guild features
-	Features []GuildFeature `json:"features"`
+	// Features []GuildFeature `json:"features"`
 
 	// Required MFA level for the guild
 	MfaLevel MfaLevel `json:"mfa_level"`
@@ -1564,23 +1557,6 @@ func (r Roles) Swap(i, j int) {
 	r[i], r[j] = r[j], r[i]
 }
 
-// A VoiceState stores the voice states of Guilds
-type VoiceState struct {
-	GuildID                 string     `json:"guild_id"`
-	ChannelID               string     `json:"channel_id"`
-	UserID                  string     `json:"user_id"`
-	Member                  *Member    `json:"member"`
-	SessionID               string     `json:"session_id"`
-	Deaf                    bool       `json:"deaf"`
-	Mute                    bool       `json:"mute"`
-	SelfDeaf                bool       `json:"self_deaf"`
-	SelfMute                bool       `json:"self_mute"`
-	SelfStream              bool       `json:"self_stream"`
-	SelfVideo               bool       `json:"self_video"`
-	Suppress                bool       `json:"suppress"`
-	RequestToSpeakTimestamp *time.Time `json:"request_to_speak_timestamp"`
-}
-
 // A Presence stores the online, offline, or idle and game status of Guild members.
 type Presence struct {
 	User         *User        `json:"user"`
@@ -1642,16 +1618,16 @@ type Member struct {
 	GuildID string `json:"guild_id"`
 
 	// The time at which the member joined the guild.
-	JoinedAt time.Time `json:"joined_at"`
+	// JoinedAt time.Time `json:"joined_at"`
 
 	// The nickname of the member, if they have one.
 	Nick string `json:"nick"`
 
 	// Whether the member is deafened at a guild level.
-	Deaf bool `json:"deaf"`
+	// Deaf bool `json:"deaf"`
 
 	// Whether the member is muted at a guild level.
-	Mute bool `json:"mute"`
+	// Mute bool `json:"mute"`
 
 	// The hash of the avatar for the guild member, if any.
 	Avatar string `json:"avatar"`
@@ -1666,21 +1642,21 @@ type Member struct {
 	Roles []string `json:"roles"`
 
 	// When the user used their Nitro boost on the server
-	PremiumSince *time.Time `json:"premium_since"`
+	// PremiumSince *time.Time `json:"premium_since"`
 
 	// The flags of this member. This is a combination of bit masks; the presence of a certain
 	// flag can be checked by performing a bitwise AND between this int and the flag.
-	Flags MemberFlags `json:"flags"`
+	// Flags MemberFlags `json:"flags"`
 
 	// Is true while the member hasn't accepted the membership screen.
-	Pending bool `json:"pending"`
+	// Pending bool `json:"pending"`
 
 	// Total permissions of the member in the channel, including overrides, returned when in the interaction object.
 	Permissions int64 `json:"permissions,string"`
 
 	// The time at which the member's timeout will expire.
 	// Time in the past or nil if the user is not timed out.
-	CommunicationDisabledUntil *time.Time `json:"communication_disabled_until"`
+	// CommunicationDisabledUntil *time.Time `json:"communication_disabled_until"`
 }
 
 // Mention creates a member mention

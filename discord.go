@@ -36,7 +36,7 @@ func New(token string) (s *Session, err error) {
 
 	// Create an empty Session interface.
 	s = &Session{
-		State:                              NewState(),
+		State:                              nil,
 		Ratelimiter:                        NewRatelimiter(),
 		StateEnabled:                       true,
 		Compress:                           true,

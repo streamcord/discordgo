@@ -343,20 +343,6 @@ type UserUpdate struct {
 	*User
 }
 
-// VoiceServerUpdate is the data for a VoiceServerUpdate event.
-type VoiceServerUpdate struct {
-	Token    string `json:"token"`
-	GuildID  string `json:"guild_id"`
-	Endpoint string `json:"endpoint"`
-}
-
-// VoiceStateUpdate is the data for a VoiceStateUpdate event.
-type VoiceStateUpdate struct {
-	*VoiceState
-	// BeforeUpdate will be nil if the VoiceState was not previously cached in the state cache.
-	BeforeUpdate *VoiceState `json:"-"`
-}
-
 // MessageDeleteBulk is the data for a MessageDeleteBulk event
 type MessageDeleteBulk struct {
 	Messages  []string `json:"ids"`

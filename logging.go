@@ -39,10 +39,11 @@ var Logger func(msgL, caller int, format string, a ...interface{})
 
 // msglog provides package wide logging consistency for discordgo
 // the format, a...  portion this command follows that of fmt.Printf
-//   msgL   : LogLevel of the message
-//   caller : 1 + the number of callers away from the message source
-//   format : Printf style message format
-//   a ...  : comma separated list of values to pass
+//
+//	msgL   : LogLevel of the message
+//	caller : 1 + the number of callers away from the message source
+//	format : Printf style message format
+//	a ...  : comma separated list of values to pass
 func msglog(msgL, caller int, format string, a ...interface{}) {
 
 	if Logger != nil {
@@ -76,28 +77,3 @@ func (s *Session) log(msgL int, format string, a ...interface{}) {
 
 	msglog(msgL, 2, format, a...)
 }
-
-// helper function that wraps msglog for the VoiceConnection struct
-// This adds a check to insure the message is only logged
-// if the voice connection log level is equal or higher than the
-// message log level
-func (v *VoiceConnection) log(msgL int, format string, a ...interface{}) {
-
-	if msgL > v.LogLevel {
-		return
-	}
-
-	msglog(msgL, 2, format, a...)
-}
-
-// printJSON is a helper function to display JSON data in an easy to read format.
-/* NOT USED ATM
-func printJSON(body []byte) {
-	var prettyJSON bytes.Buffer
-	error := json.Indent(&prettyJSON, body, "", "\t")
-	if error != nil {
-		log.Print("JSON parse error: ", error)
-	}
-	log.Println(string(prettyJSON.Bytes()))
-}
-*/

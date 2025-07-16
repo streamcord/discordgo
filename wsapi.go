@@ -166,20 +166,6 @@ func (s *Session) Open() error {
 
 	}
 
-	// A basic state is a hard requirement for Voice.
-	// We create it here so the below READY/RESUMED packet can populate
-	// the state :)
-	// XXX: Move to New() func?
-	if s.State == nil {
-		state := NewState()
-		state.TrackChannels = false
-		state.TrackEmojis = false
-		state.TrackMembers = false
-		state.TrackRoles = false
-		state.TrackVoice = false
-		s.State = state
-	}
-
 	// Now Discord should send us a READY or RESUMED packet.
 	mt, m, err = s.wsConn.ReadMessage()
 	if err != nil {
@@ -197,13 +183,6 @@ func (s *Session) Open() error {
 
 	s.log(LogInformational, "We are now connected to Discord, emitting connect event")
 	s.handleEvent(connectEventType, &Connect{})
-
-	// A VoiceConnections map is a hard requirement for Voice.
-	// XXX: can this be moved to when opening a voice connection?
-	if s.VoiceConnections == nil {
-		s.log(LogInformational, "creating new VoiceConnections map")
-		s.VoiceConnections = make(map[string]*VoiceConnection)
-	}
 
 	// Create listening chan outside of listen, as it needs to happen inside the
 	// mutex lock and needs to exist before calling heartbeat and listen
@@ -593,11 +572,11 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 	}
 
 	// Decode the event into an Event struct.
-	var e *Event
+	var e Event
 	decoder := json.NewDecoder(reader)
 	if err = decoder.Decode(&e); err != nil {
 		s.log(LogError, "error decoding websocket message, %s", err)
-		return e, err
+		return nil, err
 	}
 
 	s.log(LogDebug, "Op: %d, Seq: %d, Type: %s, Data: %s\n\n", e.Operation, e.Sequence, e.Type, string(e.RawData))
@@ -611,10 +590,10 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		s.wsMutex.Unlock()
 		if err != nil {
 			s.log(LogError, "error sending heartbeat in response to Op1")
-			return e, err
+			return &e, err
 		}
 
-		return e, nil
+		return &e, nil
 	}
 
 	// Reconnect
@@ -623,7 +602,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		s.log(LogInformational, "Closing and reconnecting in response to Op7")
 		s.CloseWithCode(websocket.CloseServiceRestart)
 		s.reconnect()
-		return e, nil
+		return &e, nil
 	}
 
 	// Invalid Session
@@ -635,7 +614,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		var resumable bool
 		if err := json.Unmarshal(e.RawData, &resumable); err != nil {
 			s.log(LogError, "error unmarshalling invalid session event, %s", err)
-			return e, err
+			return &e, err
 		}
 
 		if !resumable {
@@ -646,12 +625,12 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		}
 
 		s.reconnect()
-		return e, nil
+		return &e, nil
 	}
 
 	if e.Operation == 10 {
 		// Op10 is handled by Open()
-		return e, nil
+		return &e, nil
 	}
 
 	if e.Operation == 11 {
@@ -659,7 +638,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		s.LastHeartbeatAck = time.Now().UTC()
 		s.Unlock()
 		s.log(LogDebug, "got heartbeat ACK")
-		return e, nil
+		return &e, nil
 	}
 
 	// Do not try to Dispatch a non-Dispatch Message
@@ -667,7 +646,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		// But we probably should be doing something with them.
 		// TEMP
 		s.log(LogWarning, "unknown Op: %d, Seq: %d, Type: %s, Data: %s, message: %s", e.Operation, e.Sequence, e.Type, string(e.RawData), string(message))
-		return e, nil
+		return &e, nil
 	}
 
 	// Store the message sequence
@@ -678,6 +657,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		e.Struct = eh.New()
 
 		// Attempt to unmarshal our event.
+		// XXX: Problematic for memory usage.
 		if err = json.Unmarshal(e.RawData, e.Struct); err != nil {
 			s.log(LogError, "error unmarshalling %s event, %s", e.Type, err)
 		}
@@ -691,167 +671,18 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		// Either way, READY events must fire, even with errors.
 		s.handleEvent(e.Type, e.Struct)
 	} else {
-		s.log(LogWarning, "unknown event: Op: %d, Seq: %d, Type: %s, Data: %s", e.Operation, e.Sequence, e.Type, string(e.RawData))
+		// s.log(LogWarning, "unknown event: Op: %d, Seq: %d, Type: %s, Data: %s", e.Operation, e.Sequence, e.Type, string(e.RawData))
 	}
 
 	// For legacy reasons, we send the raw event also, this could be useful for handling unknown events.
-	s.handleEvent(eventEventType, e)
+	// s.handleEvent(eventEventType, e)
 
-	return e, nil
+	return &e, nil
 }
 
 // ------------------------------------------------------------------------------------------------
 // Code related to voice connections that initiate over the data websocket
 // ------------------------------------------------------------------------------------------------
-
-type voiceChannelJoinData struct {
-	GuildID   *string `json:"guild_id"`
-	ChannelID *string `json:"channel_id"`
-	SelfMute  bool    `json:"self_mute"`
-	SelfDeaf  bool    `json:"self_deaf"`
-}
-
-type voiceChannelJoinOp struct {
-	Op   int                  `json:"op"`
-	Data voiceChannelJoinData `json:"d"`
-}
-
-// ChannelVoiceJoin joins the session user to a voice channel.
-//
-//	gID     : Guild ID of the channel to join.
-//	cID     : Channel ID of the channel to join.
-//	mute    : If true, you will be set to muted upon joining.
-//	deaf    : If true, you will be set to deafened upon joining.
-func (s *Session) ChannelVoiceJoin(gID, cID string, mute, deaf bool) (voice *VoiceConnection, err error) {
-
-	s.log(LogInformational, "called")
-
-	s.RLock()
-	voice, _ = s.VoiceConnections[gID]
-	s.RUnlock()
-
-	if voice == nil {
-		voice = &VoiceConnection{}
-		s.Lock()
-		s.VoiceConnections[gID] = voice
-		s.Unlock()
-	}
-
-	voice.Lock()
-	voice.GuildID = gID
-	voice.ChannelID = cID
-	voice.deaf = deaf
-	voice.mute = mute
-	voice.session = s
-	voice.Unlock()
-
-	err = s.ChannelVoiceJoinManual(gID, cID, mute, deaf)
-	if err != nil {
-		return
-	}
-
-	// doesn't exactly work perfect yet.. TODO
-	err = voice.waitUntilConnected()
-	if err != nil {
-		s.log(LogWarning, "error waiting for voice to connect, %s", err)
-		voice.Close()
-		return
-	}
-
-	return
-}
-
-// ChannelVoiceJoinManual initiates a voice session to a voice channel, but does not complete it.
-//
-// This should only be used when the VoiceServerUpdate will be intercepted and used elsewhere.
-//
-//	gID     : Guild ID of the channel to join.
-//	cID     : Channel ID of the channel to join, leave empty to disconnect.
-//	mute    : If true, you will be set to muted upon joining.
-//	deaf    : If true, you will be set to deafened upon joining.
-func (s *Session) ChannelVoiceJoinManual(gID, cID string, mute, deaf bool) (err error) {
-
-	s.log(LogInformational, "called")
-
-	var channelID *string
-	if cID == "" {
-		channelID = nil
-	} else {
-		channelID = &cID
-	}
-
-	// Send the request to Discord that we want to join the voice channel
-	data := voiceChannelJoinOp{4, voiceChannelJoinData{&gID, channelID, mute, deaf}}
-	s.wsMutex.Lock()
-	err = s.wsConn.WriteJSON(data)
-	s.wsMutex.Unlock()
-	return
-}
-
-// onVoiceStateUpdate handles Voice State Update events on the data websocket.
-func (s *Session) onVoiceStateUpdate(st *VoiceStateUpdate) {
-
-	// If we don't have a connection for the channel, don't bother
-	if st.ChannelID == "" {
-		return
-	}
-
-	// Check if we have a voice connection to update
-	s.RLock()
-	voice, exists := s.VoiceConnections[st.GuildID]
-	s.RUnlock()
-	if !exists {
-		return
-	}
-
-	// We only care about events that are about us.
-	if s.State.SelfUser().ID != st.UserID {
-		return
-	}
-
-	// Store the SessionID for later use.
-	voice.Lock()
-	voice.UserID = st.UserID
-	voice.sessionID = st.SessionID
-	voice.ChannelID = st.ChannelID
-	voice.Unlock()
-}
-
-// onVoiceServerUpdate handles the Voice Server Update data websocket event.
-//
-// This is also fired if the Guild's voice region changes while connected
-// to a voice channel.  In that case, need to re-establish connection to
-// the new region endpoint.
-func (s *Session) onVoiceServerUpdate(st *VoiceServerUpdate) {
-
-	s.log(LogInformational, "called")
-
-	s.RLock()
-	voice, exists := s.VoiceConnections[st.GuildID]
-	s.RUnlock()
-
-	// If no VoiceConnection exists, just skip this
-	if !exists {
-		return
-	}
-
-	// If currently connected to voice ws/udp, then disconnect.
-	// Has no effect if not connected.
-	voice.Close()
-
-	// Store values for later use
-	voice.Lock()
-	voice.token = st.Token
-	voice.endpoint = st.Endpoint
-	voice.GuildID = st.GuildID
-	voice.Unlock()
-
-	// Open a connection to the voice server
-	err := voice.open()
-	if err != nil {
-		s.log(LogError, "onVoiceServerUpdate voice.open, %s", err)
-	}
-}
 
 type identifyOp struct {
 	Op   int      `json:"op"`
@@ -861,18 +692,6 @@ type identifyOp struct {
 // identify sends the identify packet to the gateway
 func (s *Session) identify() error {
 	s.log(LogDebug, "called")
-
-	// TODO: This is a temporary block of code to help
-	// maintain backwards compatibility
-	if s.Compress == false {
-		s.Identify.Compress = false
-	}
-
-	// TODO: This is a temporary block of code to help
-	// maintain backwards compatibility
-	if s.Token != "" && s.Identify.Token == "" {
-		s.Identify.Token = s.Token
-	}
 
 	// TODO: Below block should be refactored so ShardID and ShardCount
 	// can be deprecated and their usage moved to the Session.Identify
@@ -912,25 +731,6 @@ func (s *Session) reconnect() {
 			err = s.Open()
 			if err == nil {
 				s.log(LogInformational, "successfully reconnected to gateway")
-
-				// I'm not sure if this is actually needed.
-				// if the gw reconnect works properly, voice should stay alive
-				// However, there seems to be cases where something "weird"
-				// happens.  So we're doing this for now just to improve
-				// stability in those edge cases.
-				if s.ShouldReconnectVoiceOnSessionError {
-					s.RLock()
-					defer s.RUnlock()
-					for _, v := range s.VoiceConnections {
-
-						s.log(LogInformational, "reconnecting voice connection to guild %s", v.GuildID)
-						go v.reconnect()
-
-						// This is here just to prevent violently spamming the
-						// voice reconnects
-						time.Sleep(1 * time.Second)
-					}
-				}
 				return
 			}
 
