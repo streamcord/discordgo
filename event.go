@@ -195,7 +195,7 @@ func (s *Session) handleEvent(t string, i interface{}) {
 	s.onInterface(i)
 
 	// Then they are dispatched to anyone handling interface{} events.
-	s.handle(interfaceEventType, i)
+	// s.handle(interfaceEventType, i)
 
 	// Finally they are dispatched to any typed handlers.
 	s.handle(t, i)

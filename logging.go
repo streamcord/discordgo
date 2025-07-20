@@ -35,7 +35,7 @@ const (
 )
 
 // Logger can be used to replace the standard logging for discordgo
-var Logger func(msgL, caller int, format string, a ...interface{})
+var Logger func(s *Session, msgL, caller int, format string, a ...interface{})
 
 // msglog provides package wide logging consistency for discordgo
 // the format, a...  portion this command follows that of fmt.Printf
@@ -44,10 +44,10 @@ var Logger func(msgL, caller int, format string, a ...interface{})
 //	caller : 1 + the number of callers away from the message source
 //	format : Printf style message format
 //	a ...  : comma separated list of values to pass
-func msglog(msgL, caller int, format string, a ...interface{}) {
+func msglog(s *Session, msgL, caller int, format string, a ...interface{}) {
 
 	if Logger != nil {
-		Logger(msgL, caller, format, a...)
+		Logger(s, msgL, caller, format, a...)
 	} else {
 
 		pc, file, line, _ := runtime.Caller(caller)
@@ -75,5 +75,5 @@ func (s *Session) log(msgL int, format string, a ...interface{}) {
 		return
 	}
 
-	msglog(msgL, 2, format, a...)
+	msglog(s, msgL, 2, format, a...)
 }

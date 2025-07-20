@@ -41,7 +41,6 @@ type StateI interface {
 
 	// OnInterface is the receiver for all raw state events from the gateway.
 	// It must, at minimum, handle READY events to set the value behind SelfUser().
-	// Check discordgo/state.go for an example implementation of this function.
 	OnInterface(s *Session, i interface{}) error
 
 	// SelfUser is the bot user returned in the READY event payload.
