@@ -63,31 +63,31 @@ type ChannelDelete struct {
 }
 
 // ChannelPinsUpdate stores data for a ChannelPinsUpdate event.
-type ChannelPinsUpdate struct {
+/* type ChannelPinsUpdate struct {
 	LastPinTimestamp string `json:"last_pin_timestamp"`
 	ChannelID        string `json:"channel_id"`
 	GuildID          string `json:"guild_id,omitempty"`
-}
+} */
 
 // ThreadCreate is the data for a ThreadCreate event.
-type ThreadCreate struct {
+/* type ThreadCreate struct {
 	*Channel
 	NewlyCreated bool `json:"newly_created"`
-}
+} */
 
 // ThreadUpdate is the data for a ThreadUpdate event.
-type ThreadUpdate struct {
+/* type ThreadUpdate struct {
 	*Channel
 	BeforeUpdate *Channel `json:"-"`
-}
+} */
 
 // ThreadDelete is the data for a ThreadDelete event.
-type ThreadDelete struct {
+/* type ThreadDelete struct {
 	*Channel
-}
+} */
 
 // ThreadListSync is the data for a ThreadListSync event.
-type ThreadListSync struct {
+/* type ThreadListSync struct {
 	// The id of the guild
 	GuildID string `json:"guild_id"`
 	// The parent channel ids whose threads are being synced.
@@ -99,22 +99,22 @@ type ThreadListSync struct {
 	// All thread member objects from the synced threads for the current user,
 	// indicating which threads the current user has been added to
 	Members []*ThreadMember `json:"members"`
-}
+} */
 
 // ThreadMemberUpdate is the data for a ThreadMemberUpdate event.
-type ThreadMemberUpdate struct {
+/* type ThreadMemberUpdate struct {
 	*ThreadMember
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // ThreadMembersUpdate is the data for a ThreadMembersUpdate event.
-type ThreadMembersUpdate struct {
+/* type ThreadMembersUpdate struct {
 	ID             string              `json:"id"`
 	GuildID        string              `json:"guild_id"`
 	MemberCount    int                 `json:"member_count"`
 	AddedMembers   []AddedThreadMember `json:"added_members"`
 	RemovedMembers []string            `json:"removed_member_ids"`
-}
+} */
 
 // GuildCreate is the data for a GuildCreate event.
 type GuildCreate struct {
@@ -133,16 +133,16 @@ type GuildDelete struct {
 }
 
 // GuildBanAdd is the data for a GuildBanAdd event.
-type GuildBanAdd struct {
+/* type GuildBanAdd struct {
 	User    *User  `json:"user"`
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // GuildBanRemove is the data for a GuildBanRemove event.
-type GuildBanRemove struct {
+/* type GuildBanRemove struct {
 	User    *User  `json:"user"`
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // GuildMemberAdd is the data for a GuildMemberAdd event.
 type GuildMemberAdd struct {
@@ -177,16 +177,16 @@ type GuildRoleDelete struct {
 }
 
 // A GuildEmojisUpdate is the data for a guild emoji update event.
-type GuildEmojisUpdate struct {
+/* type GuildEmojisUpdate struct {
 	GuildID string   `json:"guild_id"`
 	Emojis  []*Emoji `json:"emojis"`
-}
+} */
 
 // A GuildStickersUpdate is the data for a GuildStickersUpdate event.
-type GuildStickersUpdate struct {
+/* type GuildStickersUpdate struct {
 	GuildID  string     `json:"guild_id"`
 	Stickers []*Sticker `json:"stickers"`
-}
+} */
 
 // A GuildMembersChunk is the data for a GuildMembersChunk event.
 type GuildMembersChunk struct {
@@ -200,121 +200,121 @@ type GuildMembersChunk struct {
 }
 
 // GuildIntegrationsUpdate is the data for a GuildIntegrationsUpdate event.
-type GuildIntegrationsUpdate struct {
+/* type GuildIntegrationsUpdate struct {
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // StageInstanceEventCreate is the data for a StageInstanceEventCreate event.
-type StageInstanceEventCreate struct {
+/* type StageInstanceEventCreate struct {
 	*StageInstance
-}
+} */
 
 // StageInstanceEventUpdate is the data for a StageInstanceEventUpdate event.
-type StageInstanceEventUpdate struct {
+/* type StageInstanceEventUpdate struct {
 	*StageInstance
-}
+} */
 
 // StageInstanceEventDelete is the data for a StageInstanceEventDelete event.
-type StageInstanceEventDelete struct {
+/* type StageInstanceEventDelete struct {
 	*StageInstance
-}
+} */
 
 // GuildScheduledEventCreate is the data for a GuildScheduledEventCreate event.
-type GuildScheduledEventCreate struct {
+/* type GuildScheduledEventCreate struct {
 	*GuildScheduledEvent
-}
+} */
 
 // GuildScheduledEventUpdate is the data for a GuildScheduledEventUpdate event.
-type GuildScheduledEventUpdate struct {
+/* type GuildScheduledEventUpdate struct {
 	*GuildScheduledEvent
-}
+} */
 
 // GuildScheduledEventDelete is the data for a GuildScheduledEventDelete event.
-type GuildScheduledEventDelete struct {
+/* type GuildScheduledEventDelete struct {
 	*GuildScheduledEvent
-}
+} */
 
 // GuildScheduledEventUserAdd is the data for a GuildScheduledEventUserAdd event.
-type GuildScheduledEventUserAdd struct {
+/* type GuildScheduledEventUserAdd struct {
 	GuildScheduledEventID string `json:"guild_scheduled_event_id"`
 	UserID                string `json:"user_id"`
 	GuildID               string `json:"guild_id"`
-}
+} */
 
 // GuildScheduledEventUserRemove is the data for a GuildScheduledEventUserRemove event.
-type GuildScheduledEventUserRemove struct {
+/* type GuildScheduledEventUserRemove struct {
 	GuildScheduledEventID string `json:"guild_scheduled_event_id"`
 	UserID                string `json:"user_id"`
 	GuildID               string `json:"guild_id"`
-}
+} */
 
 // IntegrationCreate is the data for a IntegrationCreate event.
-type IntegrationCreate struct {
+/* type IntegrationCreate struct {
 	*Integration
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // IntegrationUpdate is the data for a IntegrationUpdate event.
-type IntegrationUpdate struct {
+/* type IntegrationUpdate struct {
 	*Integration
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // IntegrationDelete is the data for a IntegrationDelete event.
-type IntegrationDelete struct {
+/* type IntegrationDelete struct {
 	ID            string `json:"id"`
 	GuildID       string `json:"guild_id"`
 	ApplicationID string `json:"application_id,omitempty"`
-}
+} */
 
 // MessageCreate is the data for a MessageCreate event.
-type MessageCreate struct {
+/* type MessageCreate struct {
 	*Message
-}
+} */
 
 // UnmarshalJSON is a helper function to unmarshal MessageCreate object.
-func (m *MessageCreate) UnmarshalJSON(b []byte) error {
+/* func (m *MessageCreate) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &m.Message)
-}
+} */
 
 // MessageUpdate is the data for a MessageUpdate event.
-type MessageUpdate struct {
+/* type MessageUpdate struct {
 	*Message
 	// BeforeUpdate will be nil if the Message was not previously cached in the state cache.
 	BeforeUpdate *Message `json:"-"`
-}
+} */
 
 // UnmarshalJSON is a helper function to unmarshal MessageUpdate object.
-func (m *MessageUpdate) UnmarshalJSON(b []byte) error {
+/* func (m *MessageUpdate) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &m.Message)
-}
+} */
 
 // MessageDelete is the data for a MessageDelete event.
-type MessageDelete struct {
+/* type MessageDelete struct {
 	*Message
 	BeforeDelete *Message `json:"-"`
-}
+} */
 
 // UnmarshalJSON is a helper function to unmarshal MessageDelete object.
-func (m *MessageDelete) UnmarshalJSON(b []byte) error {
+/* func (m *MessageDelete) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &m.Message)
-}
+} */
 
 // MessageReactionAdd is the data for a MessageReactionAdd event.
-type MessageReactionAdd struct {
+/* type MessageReactionAdd struct {
 	*MessageReaction
 	Member *Member `json:"member,omitempty"`
-}
+} */
 
 // MessageReactionRemove is the data for a MessageReactionRemove event.
-type MessageReactionRemove struct {
+/* type MessageReactionRemove struct {
 	*MessageReaction
-}
+} */
 
 // MessageReactionRemoveAll is the data for a MessageReactionRemoveAll event.
-type MessageReactionRemoveAll struct {
+/* type MessageReactionRemoveAll struct {
 	*MessageReaction
-}
+} */
 
 // PresencesReplace is the data for a PresencesReplace event.
 type PresencesReplace []*Presence
@@ -331,77 +331,77 @@ type Resumed struct {
 }
 
 // TypingStart is the data for a TypingStart event.
-type TypingStart struct {
+/* type TypingStart struct {
 	UserID    string `json:"user_id"`
 	ChannelID string `json:"channel_id"`
 	GuildID   string `json:"guild_id,omitempty"`
 	Timestamp int    `json:"timestamp"`
-}
+} */
 
 // UserUpdate is the data for a UserUpdate event.
-type UserUpdate struct {
+/* type UserUpdate struct {
 	*User
-}
+} */
 
 // MessageDeleteBulk is the data for a MessageDeleteBulk event
-type MessageDeleteBulk struct {
+/* type MessageDeleteBulk struct {
 	Messages  []string `json:"ids"`
 	ChannelID string   `json:"channel_id"`
 	GuildID   string   `json:"guild_id"`
-}
+} */
 
 // WebhooksUpdate is the data for a WebhooksUpdate event
-type WebhooksUpdate struct {
+/* type WebhooksUpdate struct {
 	GuildID   string `json:"guild_id"`
 	ChannelID string `json:"channel_id"`
-}
+} */
 
 // InteractionCreate is the data for a InteractionCreate event
-type InteractionCreate struct {
+/* type InteractionCreate struct {
 	*Interaction
-}
+} */
 
 // UnmarshalJSON is a helper function to unmarshal Interaction object.
-func (i *InteractionCreate) UnmarshalJSON(b []byte) error {
+/* func (i *InteractionCreate) UnmarshalJSON(b []byte) error {
 	return json.Unmarshal(b, &i.Interaction)
-}
+} */
 
 // InviteCreate is the data for a InviteCreate event
-type InviteCreate struct {
+/* type InviteCreate struct {
 	*Invite
 	ChannelID string `json:"channel_id"`
 	GuildID   string `json:"guild_id"`
-}
+} */
 
 // InviteDelete is the data for a InviteDelete event
-type InviteDelete struct {
+/* type InviteDelete struct {
 	ChannelID string `json:"channel_id"`
 	GuildID   string `json:"guild_id"`
 	Code      string `json:"code"`
-}
+} */
 
 // ApplicationCommandPermissionsUpdate is the data for an ApplicationCommandPermissionsUpdate event
-type ApplicationCommandPermissionsUpdate struct {
+/* type ApplicationCommandPermissionsUpdate struct {
 	*GuildApplicationCommandPermissions
-}
+} */
 
 // AutoModerationRuleCreate is the data for an AutoModerationRuleCreate event.
-type AutoModerationRuleCreate struct {
+/* type AutoModerationRuleCreate struct {
 	*AutoModerationRule
-}
+} */
 
 // AutoModerationRuleUpdate is the data for an AutoModerationRuleUpdate event.
-type AutoModerationRuleUpdate struct {
+/* type AutoModerationRuleUpdate struct {
 	*AutoModerationRule
-}
+} */
 
 // AutoModerationRuleDelete is the data for an AutoModerationRuleDelete event.
-type AutoModerationRuleDelete struct {
+/* type AutoModerationRuleDelete struct {
 	*AutoModerationRule
-}
+} */
 
 // AutoModerationActionExecution is the data for an AutoModerationActionExecution event.
-type AutoModerationActionExecution struct {
+/* type AutoModerationActionExecution struct {
 	GuildID              string                        `json:"guild_id"`
 	Action               AutoModerationAction          `json:"action"`
 	RuleID               string                        `json:"rule_id"`
@@ -413,62 +413,62 @@ type AutoModerationActionExecution struct {
 	Content              string                        `json:"content"`
 	MatchedKeyword       string                        `json:"matched_keyword"`
 	MatchedContent       string                        `json:"matched_content"`
-}
+} */
 
 // GuildAuditLogEntryCreate is the data for a GuildAuditLogEntryCreate event.
-type GuildAuditLogEntryCreate struct {
+/* type GuildAuditLogEntryCreate struct {
 	*AuditLogEntry
 	GuildID string `json:"guild_id"`
-}
+} */
 
 // MessagePollVoteAdd is the data for a MessagePollVoteAdd event.
-type MessagePollVoteAdd struct {
+/* type MessagePollVoteAdd struct {
 	UserID    string `json:"user_id"`
 	ChannelID string `json:"channel_id"`
 	MessageID string `json:"message_id"`
 	GuildID   string `json:"guild_id,omitempty"`
 	AnswerID  int    `json:"answer_id"`
-}
+} */
 
 // MessagePollVoteRemove is the data for a MessagePollVoteRemove event.
-type MessagePollVoteRemove struct {
+/* type MessagePollVoteRemove struct {
 	UserID    string `json:"user_id"`
 	ChannelID string `json:"channel_id"`
 	MessageID string `json:"message_id"`
 	GuildID   string `json:"guild_id,omitempty"`
 	AnswerID  int    `json:"answer_id"`
-}
+} */
 
 // EntitlementCreate is the data for an EntitlementCreate event.
-type EntitlementCreate struct {
+/* type EntitlementCreate struct {
 	*Entitlement
-}
+} */
 
 // EntitlementUpdate is the data for an EntitlementUpdate event.
-type EntitlementUpdate struct {
+/* type EntitlementUpdate struct {
 	*Entitlement
-}
+} */
 
 // EntitlementDelete is the data for an EntitlementDelete event.
 // NOTE: Entitlements are not deleted when they expire.
-type EntitlementDelete struct {
+/* type EntitlementDelete struct {
 	*Entitlement
-}
+} */
 
 // SubscriptionCreate is the data for an SubscriptionCreate event.
 // https://discord.com/developers/docs/monetization/implementing-app-subscriptions#using-subscription-events-for-the-subscription-lifecycle
-type SubscriptionCreate struct {
+/* type SubscriptionCreate struct {
 	*Subscription
-}
+} */
 
 // SubscriptionUpdate is the data for an SubscriptionUpdate event.
 // https://discord.com/developers/docs/monetization/implementing-app-subscriptions#using-subscription-events-for-the-subscription-lifecycle
-type SubscriptionUpdate struct {
+/* type SubscriptionUpdate struct {
 	*Subscription
-}
+} */
 
 // SubscriptionDelete is the data for an SubscriptionDelete event.
 // https://discord.com/developers/docs/monetization/implementing-app-subscriptions#using-subscription-events-for-the-subscription-lifecycle
-type SubscriptionDelete struct {
+/* type SubscriptionDelete struct {
 	*Subscription
-}
+} */

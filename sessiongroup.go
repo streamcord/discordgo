@@ -21,10 +21,13 @@ func (g *SessionGroup) CloseAll() {
 	}
 }
 
-func (g *SessionGroup) OpenAll() {
+func (g *SessionGroup) OpenAll() error {
 	for _, s := range g.Sessions {
 		if err := s.Open(); err != nil {
 			s.log(LogError, "failed to open shard %d: %s", s.ShardID, err.Error())
+			g.CloseAll()
+			return err
 		}
 	}
+	return nil
 }
