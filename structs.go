@@ -368,93 +368,93 @@ type Channel struct {
 	Name string `json:"name"`
 
 	// The topic of the channel.
-	Topic string `json:"topic"`
+	// Topic string `json:"topic"`
 
 	// The type of the channel.
 	Type ChannelType `json:"type"`
 
 	// The ID of the last message sent in the channel. This is not
 	// guaranteed to be an ID of a valid message.
-	LastMessageID string `json:"last_message_id"`
+	// LastMessageID string `json:"last_message_id"`
 
 	// The timestamp of the last pinned message in the channel.
 	// nil if the channel has no pinned messages.
-	LastPinTimestamp *time.Time `json:"last_pin_timestamp"`
+	// LastPinTimestamp *time.Time `json:"last_pin_timestamp"`
 
 	// An approximate count of messages in a thread, stops counting at 50
-	MessageCount int `json:"message_count"`
+	// MessageCount int `json:"message_count"`
 	// An approximate count of users in a thread, stops counting at 50
-	MemberCount int `json:"member_count"`
+	// MemberCount int `json:"member_count"`
 
 	// Whether the channel is marked as NSFW.
-	NSFW bool `json:"nsfw"`
+	// NSFW bool `json:"nsfw"`
 
 	// Icon of the group DM channel.
-	Icon string `json:"icon"`
+	// Icon string `json:"icon"`
 
 	// The position of the channel, used for sorting in client.
 	Position int `json:"position"`
 
 	// The bitrate of the channel, if it is a voice channel.
-	Bitrate int `json:"bitrate"`
+	// Bitrate int `json:"bitrate"`
 
 	// The recipients of the channel. This is only populated in DM channels.
-	Recipients []*User `json:"recipients"`
+	// Recipients []*User `json:"recipients"`
 
 	// The messages in the channel. This is only present in state-cached channels,
 	// and State.MaxMessageCount must be non-zero.
-	Messages []*Message `json:"-"`
+	// Messages []*Message `json:"-"`
 
 	// A list of permission overwrites present for the channel.
 	PermissionOverwrites []*PermissionOverwrite `json:"permission_overwrites"`
 
 	// The user limit of the voice channel.
-	UserLimit int `json:"user_limit"`
+	// UserLimit int `json:"user_limit"`
 
 	// The ID of the parent channel, if the channel is under a category. For threads - id of the channel thread was created in.
 	ParentID string `json:"parent_id"`
 
 	// Amount of seconds a user has to wait before sending another message or creating another thread (0-21600)
 	// bots, as well as users with the permission manage_messages or manage_channel, are unaffected
-	RateLimitPerUser int `json:"rate_limit_per_user"`
+	// RateLimitPerUser int `json:"rate_limit_per_user"`
 
 	// ID of the creator of the group DM or thread
-	OwnerID string `json:"owner_id"`
+	// OwnerID string `json:"owner_id"`
 
 	// ApplicationID of the DM creator Zeroed if guild channel or not a bot user
-	ApplicationID string `json:"application_id"`
+	// ApplicationID string `json:"application_id"`
 
 	// Thread-specific fields not needed by other channels
-	ThreadMetadata *ThreadMetadata `json:"thread_metadata,omitempty"`
+	// ThreadMetadata *ThreadMetadata `json:"thread_metadata,omitempty"`
 	// Thread member object for the current user, if they have joined the thread, only included on certain API endpoints
-	Member *ThreadMember `json:"thread_member"`
+	// Member *ThreadMember `json:"thread_member"`
 
 	// All thread members. State channels only.
-	Members []*ThreadMember `json:"-"`
+	// Members []*ThreadMember `json:"-"`
 
 	// Channel flags.
-	Flags ChannelFlags `json:"flags"`
+	// Flags ChannelFlags `json:"flags"`
 
 	// The set of tags that can be used in a forum channel.
-	AvailableTags []ForumTag `json:"available_tags"`
+	// AvailableTags []ForumTag `json:"available_tags"`
 
 	// The IDs of the set of tags that have been applied to a thread in a forum channel.
-	AppliedTags []string `json:"applied_tags"`
+	// AppliedTags []string `json:"applied_tags"`
 
 	// Emoji to use as the default reaction to a forum post.
-	DefaultReactionEmoji ForumDefaultReaction `json:"default_reaction_emoji"`
+	// DefaultReactionEmoji ForumDefaultReaction `json:"default_reaction_emoji"`
 
 	// The initial RateLimitPerUser to set on newly created threads in a channel.
 	// This field is copied to the thread at creation time and does not live update.
-	DefaultThreadRateLimitPerUser int `json:"default_thread_rate_limit_per_user"`
+	// DefaultThreadRateLimitPerUser int `json:"default_thread_rate_limit_per_user"`
 
 	// The default sort order type used to order posts in forum channels.
 	// Defaults to null, which indicates a preferred sort order hasn't been set by a channel admin.
-	DefaultSortOrder *ForumSortOrderType `json:"default_sort_order"`
+	// DefaultSortOrder *ForumSortOrderType `json:"default_sort_order"`
 
 	// The default forum layout view used to display posts in forum channels.
 	// Defaults to ForumLayoutNotSet, which indicates a layout view has not been set by a channel admin.
-	DefaultForumLayout ForumLayout `json:"default_forum_layout"`
+	// DefaultForumLayout ForumLayout `json:"default_forum_layout"`
 }
 
 // Mention returns a string which mentions the channel
@@ -771,16 +771,16 @@ type Guild struct {
 	Icon string `json:"icon"`
 
 	// The voice region of the guild.
-	Region string `json:"region"`
+	// Region string `json:"region"`
 
 	// The ID of the AFK voice channel.
-	AfkChannelID string `json:"afk_channel_id"`
+	// AfkChannelID string `json:"afk_channel_id"`
 
 	// The user ID of the owner of the guild.
 	OwnerID string `json:"owner_id"`
 
 	// If we are the owner of the guild
-	Owner bool `json:"owner"`
+	// Owner bool `json:"owner"`
 
 	// The time at which the current user joined the guild.
 	// This field is only present in GUILD_CREATE events and websocket
@@ -788,21 +788,21 @@ type Guild struct {
 	JoinedAt time.Time `json:"joined_at"`
 
 	// The hash of the guild's discovery splash.
-	DiscoverySplash string `json:"discovery_splash"`
+	// DiscoverySplash string `json:"discovery_splash"`
 
 	// The hash of the guild's splash.
-	Splash string `json:"splash"`
+	// Splash string `json:"splash"`
 
 	// The timeout, in seconds, before a user is considered AFK in voice.
-	AfkTimeout int `json:"afk_timeout"`
+	// AfkTimeout int `json:"afk_timeout"`
 
 	// The number of members in the guild.
 	// This field is only present in GUILD_CREATE events and websocket
 	// update events, and thus is only present in state-cached guilds.
-	MemberCount int `json:"member_count"`
+	// MemberCount int `json:"member_count"`
 
 	// The verification level required for the guild.
-	VerificationLevel VerificationLevel `json:"verification_level"`
+	// VerificationLevel VerificationLevel `json:"verification_level"`
 
 	// Whether the guild is considered large. This is
 	// determined by a member threshold in the identify packet,
@@ -810,7 +810,7 @@ type Guild struct {
 	Large bool `json:"large"`
 
 	// The default message notification setting for the guild.
-	DefaultMessageNotifications MessageNotifications `json:"default_message_notifications"`
+	// DefaultMessageNotifications MessageNotifications `json:"default_message_notifications"`
 
 	// A list of roles in the guild.
 	Roles []*Role `json:"roles"`
@@ -832,10 +832,10 @@ type Guild struct {
 	Presences []*Presence `json:"presences"`
 
 	// The maximum number of presences for the guild (the default value, currently 25000, is in effect when null is returned)
-	MaxPresences int `json:"max_presences"`
+	// MaxPresences int `json:"max_presences"`
 
 	// The maximum number of members for the guild
-	MaxMembers int `json:"max_members"`
+	// MaxMembers int `json:"max_members"`
 
 	// A list of channels in the guild.
 	// This field is only present in GUILD_CREATE events and websocket
@@ -858,70 +858,70 @@ type Guild struct {
 	Unavailable bool `json:"unavailable"`
 
 	// The explicit content filter level
-	ExplicitContentFilter ExplicitContentFilterLevel `json:"explicit_content_filter"`
+	// ExplicitContentFilter ExplicitContentFilterLevel `json:"explicit_content_filter"`
 
 	// The NSFW Level of the guild
-	NSFWLevel GuildNSFWLevel `json:"nsfw_level"`
+	// NSFWLevel GuildNSFWLevel `json:"nsfw_level"`
 
 	// The list of enabled guild features
 	// Features []GuildFeature `json:"features"`
 
 	// Required MFA level for the guild
-	MfaLevel MfaLevel `json:"mfa_level"`
+	// MfaLevel MfaLevel `json:"mfa_level"`
 
 	// The application id of the guild if bot created.
-	ApplicationID string `json:"application_id"`
+	// ApplicationID string `json:"application_id"`
 
 	// Whether or not the Server Widget is enabled
-	WidgetEnabled bool `json:"widget_enabled"`
+	// WidgetEnabled bool `json:"widget_enabled"`
 
 	// The Channel ID for the Server Widget
-	WidgetChannelID string `json:"widget_channel_id"`
+	// WidgetChannelID string `json:"widget_channel_id"`
 
 	// The Channel ID to which system messages are sent (eg join and leave messages)
-	SystemChannelID string `json:"system_channel_id"`
+	// SystemChannelID string `json:"system_channel_id"`
 
 	// The System channel flags
-	SystemChannelFlags SystemChannelFlag `json:"system_channel_flags"`
+	// SystemChannelFlags SystemChannelFlag `json:"system_channel_flags"`
 
 	// The ID of the rules channel ID, used for rules.
-	RulesChannelID string `json:"rules_channel_id"`
+	// RulesChannelID string `json:"rules_channel_id"`
 
 	// the vanity url code for the guild
-	VanityURLCode string `json:"vanity_url_code"`
+	// VanityURLCode string `json:"vanity_url_code"`
 
 	// the description for the guild
-	Description string `json:"description"`
+	// Description string `json:"description"`
 
 	// The hash of the guild's banner
 	Banner string `json:"banner"`
 
 	// The premium tier of the guild
-	PremiumTier PremiumTier `json:"premium_tier"`
+	// PremiumTier PremiumTier `json:"premium_tier"`
 
 	// The total number of users currently boosting this server
-	PremiumSubscriptionCount int `json:"premium_subscription_count"`
+	// PremiumSubscriptionCount int `json:"premium_subscription_count"`
 
 	// The preferred locale of a guild with the "PUBLIC" feature; used in server discovery and notices from Discord; defaults to "en-US"
-	PreferredLocale string `json:"preferred_locale"`
+	// PreferredLocale string `json:"preferred_locale"`
 
 	// The id of the channel where admins and moderators of guilds with the "PUBLIC" feature receive notices from Discord
-	PublicUpdatesChannelID string `json:"public_updates_channel_id"`
+	// PublicUpdatesChannelID string `json:"public_updates_channel_id"`
 
 	// The maximum amount of users in a video channel
-	MaxVideoChannelUsers int `json:"max_video_channel_users"`
+	// MaxVideoChannelUsers int `json:"max_video_channel_users"`
 
 	// Approximate number of members in this guild, returned from the GET /guild/<id> endpoint when with_counts is true
-	ApproximateMemberCount int `json:"approximate_member_count"`
+	// ApproximateMemberCount int `json:"approximate_member_count"`
 
 	// Approximate number of non-offline members in this guild, returned from the GET /guild/<id> endpoint when with_counts is true
-	ApproximatePresenceCount int `json:"approximate_presence_count"`
+	// ApproximatePresenceCount int `json:"approximate_presence_count"`
 
 	// Permissions of our user
 	Permissions int64 `json:"permissions,string"`
 
 	// Stage instances in the guild
-	StageInstances []*StageInstance `json:"stage_instances"`
+	// StageInstances []*StageInstance `json:"stage_instances"`
 }
 
 // A GuildPreview holds data related to a specific public Discord Guild, even if the user is not in the guild.
@@ -1404,10 +1404,10 @@ type Role struct {
 	Permissions int64 `json:"permissions,string"`
 
 	// The hash of the role icon. Use Role.IconURL to retrieve the icon's URL.
-	Icon string `json:"icon"`
+	// Icon string `json:"icon"`
 
 	// The emoji assigned to this role.
-	UnicodeEmoji string `json:"unicode_emoji"`
+	// UnicodeEmoji string `json:"unicode_emoji"`
 
 	// The flags of the role, which describe its extra features.
 	// This is a combination of bit masks; the presence of a certain flag can
@@ -1480,7 +1480,7 @@ func (r *Role) Mention() string {
 //
 //	size:    The size of the desired role icon as a power of two
 //	         Image size can be any power of two between 16 and 4096.
-func (r *Role) IconURL(size string) string {
+/* func (r *Role) IconURL(size string) string {
 	if r.Icon == "" {
 		return ""
 	}
@@ -1491,7 +1491,7 @@ func (r *Role) IconURL(size string) string {
 		return URL + "?size=" + size
 	}
 	return URL
-}
+} */
 
 // IsBotManaged returns whether the role is associated with a bot.
 func (r *Role) IsBotManaged() bool {
@@ -1559,11 +1559,11 @@ func (r Roles) Swap(i, j int) {
 
 // A Presence stores the online, offline, or idle and game status of Guild members.
 type Presence struct {
-	User         *User        `json:"user"`
-	Status       Status       `json:"status"`
-	Activities   []*Activity  `json:"activities"`
-	Since        *int         `json:"since"`
-	ClientStatus ClientStatus `json:"client_status"`
+	User *User `json:"user"`
+	// Status       Status       `json:"status"`
+	Activities []*Activity `json:"activities"`
+	// Since        *int         `json:"since"`
+	// ClientStatus ClientStatus `json:"client_status"`
 }
 
 // A TimeStamps struct contains start and end times used in the rich presence "playing .." Game
@@ -2279,59 +2279,20 @@ type GatewayStatusUpdate struct {
 // Activity defines the Activity sent with GatewayStatusUpdate
 // https://discord.com/developers/docs/topics/gateway#activity-object
 type Activity struct {
-	Name          string       `json:"name"`
-	Type          ActivityType `json:"type"`
-	URL           string       `json:"url,omitempty"`
-	CreatedAt     time.Time    `json:"created_at"`
-	ApplicationID interface{}  `json:"application_id,omitempty"`
-	State         string       `json:"state,omitempty"`
-	Details       string       `json:"details,omitempty"`
-	Timestamps    TimeStamps   `json:"timestamps,omitempty"`
-	Emoji         Emoji        `json:"emoji,omitempty"`
-	Party         Party        `json:"party,omitempty"`
-	Assets        Assets       `json:"assets,omitempty"`
-	Secrets       Secrets      `json:"secrets,omitempty"`
-	Instance      bool         `json:"instance,omitempty"`
-	Flags         int          `json:"flags,omitempty"`
-}
-
-// UnmarshalJSON is a custom unmarshaljson to make CreatedAt a time.Time instead of an int
-func (activity *Activity) UnmarshalJSON(b []byte) error {
-	temp := struct {
-		Name          string       `json:"name"`
-		Type          ActivityType `json:"type"`
-		URL           string       `json:"url,omitempty"`
-		CreatedAt     int64        `json:"created_at"`
-		ApplicationID json.Number  `json:"application_id,omitempty"`
-		State         string       `json:"state,omitempty"`
-		Details       string       `json:"details,omitempty"`
-		Timestamps    TimeStamps   `json:"timestamps,omitempty"`
-		Emoji         Emoji        `json:"emoji,omitempty"`
-		Party         Party        `json:"party,omitempty"`
-		Assets        Assets       `json:"assets,omitempty"`
-		Secrets       Secrets      `json:"secrets,omitempty"`
-		Instance      bool         `json:"instance,omitempty"`
-		Flags         int          `json:"flags,omitempty"`
-	}{}
-	err := Unmarshal(b, &temp)
-	if err != nil {
-		return err
-	}
-	activity.ApplicationID = temp.ApplicationID.String()
-	activity.CreatedAt = time.Unix(0, temp.CreatedAt*1000000)
-	activity.Assets = temp.Assets
-	activity.Details = temp.Details
-	activity.Emoji = temp.Emoji
-	activity.Flags = temp.Flags
-	activity.Instance = temp.Instance
-	activity.Name = temp.Name
-	activity.Party = temp.Party
-	activity.Secrets = temp.Secrets
-	activity.State = temp.State
-	activity.Timestamps = temp.Timestamps
-	activity.Type = temp.Type
-	activity.URL = temp.URL
-	return nil
+	Name string       `json:"name"`
+	Type ActivityType `json:"type"`
+	URL  string       `json:"url,omitempty"`
+	// CreatedAt     time.Time    `json:"created_at"`
+	// ApplicationID interface{}  `json:"application_id,omitempty"`
+	State   string `json:"state,omitempty"`
+	Details string `json:"details,omitempty"`
+	// Timestamps TimeStamps `json:"timestamps,omitempty"`
+	// Emoji         Emoji        `json:"emoji,omitempty"`
+	// Party         Party        `json:"party,omitempty"`
+	Assets Assets `json:"assets,omitempty"`
+	// Secrets       Secrets      `json:"secrets,omitempty"`
+	// Instance      bool         `json:"instance,omitempty"`
+	// Flags         int          `json:"flags,omitempty"`
 }
 
 // Party defines the Party field in the Activity struct

@@ -1315,7 +1315,7 @@ func (s *Session) GuildIcon(guildID string, options ...RequestOption) (img image
 
 // GuildSplash returns an image.Image of a guild splash image.
 // guildID   : The ID of a Guild.
-func (s *Session) GuildSplash(guildID string, options ...RequestOption) (img image.Image, err error) {
+/* func (s *Session) GuildSplash(guildID string, options ...RequestOption) (img image.Image, err error) {
 	g, err := s.Guild(guildID, options...)
 	if err != nil {
 		return
@@ -1333,7 +1333,7 @@ func (s *Session) GuildSplash(guildID string, options ...RequestOption) (img ima
 
 	img, _, err = image.Decode(bytes.NewReader(body))
 	return
-}
+} */
 
 // GuildEmbed returns the embed for a Guild.
 // guildID   : The ID of a Guild.
