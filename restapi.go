@@ -337,18 +337,18 @@ func (s *Session) User(userID string, options ...RequestOption) (st *User, err e
 
 // UserAvatar is deprecated. Please use UserAvatarDecode
 // userID    : A user ID or "@me" which is a shortcut of current user ID
-func (s *Session) UserAvatar(userID string, options ...RequestOption) (img image.Image, err error) {
+/* func (s *Session) UserAvatar(userID string, options ...RequestOption) (img image.Image, err error) {
 	u, err := s.User(userID, options...)
 	if err != nil {
 		return
 	}
 	img, err = s.UserAvatarDecode(u, options...)
 	return
-}
+} */
 
 // UserAvatarDecode returns an image.Image of a user's Avatar
 // user : The user which avatar should be retrieved
-func (s *Session) UserAvatarDecode(u *User, options ...RequestOption) (img image.Image, err error) {
+/* func (s *Session) UserAvatarDecode(u *User, options ...RequestOption) (img image.Image, err error) {
 	body, err := s.RequestWithBucketID("GET", EndpointUserAvatar(u.ID, u.Avatar), nil, EndpointUserAvatar("", ""), options...)
 	if err != nil {
 		return
@@ -356,7 +356,7 @@ func (s *Session) UserAvatarDecode(u *User, options ...RequestOption) (img image
 
 	img, _, err = image.Decode(bytes.NewReader(body))
 	return
-}
+} */
 
 // UserUpdate updates current user settings.
 func (s *Session) UserUpdate(username, avatar, banner string, options ...RequestOption) (st *User, err error) {
