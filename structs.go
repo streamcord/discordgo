@@ -1559,7 +1559,9 @@ func (r Roles) Swap(i, j int) {
 
 // A Presence stores the online, offline, or idle and game status of Guild members.
 type Presence struct {
-	User *User `json:"user"`
+	User struct {
+		ID string
+	} `json:"user"`
 	// Status       Status       `json:"status"`
 	Activities []*Activity `json:"activities"`
 	// Since        *int         `json:"since"`
