@@ -160,19 +160,19 @@ type ApplicationIntegrationTypeConfig struct {
 
 // Application stores values for a Discord Application
 type Application struct {
-	ID                     string                                                           `json:"id,omitempty"`
-	Name                   string                                                           `json:"name"`
-	Icon                   string                                                           `json:"icon,omitempty"`
-	Description            string                                                           `json:"description,omitempty"`
-	RPCOrigins             []string                                                         `json:"rpc_origins,omitempty"`
-	BotPublic              bool                                                             `json:"bot_public,omitempty"`
-	BotRequireCodeGrant    bool                                                             `json:"bot_require_code_grant,omitempty"`
-	TermsOfServiceURL      string                                                           `json:"terms_of_service_url"`
-	PrivacyProxyURL        string                                                           `json:"privacy_policy_url"`
-	Owner                  *User                                                            `json:"owner"`
-	Summary                string                                                           `json:"summary"`
-	VerifyKey              string                                                           `json:"verify_key"`
-	Team                   *Team                                                            `json:"team"`
+	ID                  string   `json:"id,omitempty"`
+	Name                string   `json:"name"`
+	Icon                string   `json:"icon,omitempty"`
+	Description         string   `json:"description,omitempty"`
+	RPCOrigins          []string `json:"rpc_origins,omitempty"`
+	BotPublic           bool     `json:"bot_public,omitempty"`
+	BotRequireCodeGrant bool     `json:"bot_require_code_grant,omitempty"`
+	TermsOfServiceURL   string   `json:"terms_of_service_url"`
+	PrivacyProxyURL     string   `json:"privacy_policy_url"`
+	Owner               *User    `json:"owner"`
+	Summary             string   `json:"summary"`
+	VerifyKey           string   `json:"verify_key"`
+	// Team                   *Team                                                            `json:"team"`
 	GuildID                string                                                           `json:"guild_id"`
 	PrimarySKUID           string                                                           `json:"primary_sku_id"`
 	Slug                   string                                                           `json:"slug"`
@@ -960,14 +960,6 @@ type GuildPreview struct {
 	Description string `json:"description"`
 }
 
-// IconURL returns a URL to the guild's icon.
-//
-//	size:    The size of the desired icon image as a power of two
-//	         Image size can be any power of two between 16 and 4096.
-func (g *GuildPreview) IconURL(size string) string {
-	return iconURL(g.Icon, EndpointGuildIcon(g.ID, g.Icon), EndpointGuildIconAnimated(g.ID, g.Icon), size)
-}
-
 // GuildScheduledEvent is a representation of a scheduled event in a guild. Only for retrieval of the data.
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event
 type GuildScheduledEvent struct {
@@ -1280,22 +1272,6 @@ const (
 	SystemChannelFlagsSuppressJoinNotificationReplies    SystemChannelFlag = 1 << 3
 )
 
-// IconURL returns a URL to the guild's icon.
-//
-//	size:    The size of the desired icon image as a power of two
-//	         Image size can be any power of two between 16 and 4096.
-func (g *Guild) IconURL(size string) string {
-	return iconURL(g.Icon, EndpointGuildIcon(g.ID, g.Icon), EndpointGuildIconAnimated(g.ID, g.Icon), size)
-}
-
-// BannerURL returns a URL to the guild's banner.
-//
-//	size:    The size of the desired banner image as a power of two
-//	         Image size can be any power of two between 16 and 4096.
-func (g *Guild) BannerURL(size string) string {
-	return bannerURL(g.Banner, EndpointGuildBanner(g.ID, g.Banner), EndpointGuildBannerAnimated(g.ID, g.Banner), size)
-}
-
 // A UserGuild holds a brief version of a Guild
 type UserGuild struct {
 	ID          string         `json:"id"`
@@ -1560,7 +1536,7 @@ func (r Roles) Swap(i, j int) {
 // A Presence stores the online, offline, or idle and game status of Guild members.
 type Presence struct {
 	User struct {
-		ID string
+		ID string `json:"id"`
 	} `json:"user"`
 	// Status       Status       `json:"status"`
 	Activities []*Activity `json:"activities"`
@@ -1879,7 +1855,7 @@ type GuildEmbed struct {
 // A GuildAuditLog stores data for a guild audit log.
 // https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure
 type GuildAuditLog struct {
-	Webhooks        []*Webhook       `json:"webhooks,omitempty"`
+	// Webhooks        []*Webhook       `json:"webhooks,omitempty"`
 	Users           []*User          `json:"users,omitempty"`
 	AuditLogEntries []*AuditLogEntry `json:"audit_log_entries"`
 	Integrations    []*Integration   `json:"integrations"`
