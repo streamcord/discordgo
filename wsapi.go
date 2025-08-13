@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -41,7 +40,7 @@ type resumePacket struct {
 	Data struct {
 		Token     string `json:"token"`
 		SessionID string `json:"session_id"`
-		Sequence  int64  `json:"seq"`
+		Sequence  uint64 `json:"seq"`
 	} `json:"d"`
 }
 
@@ -62,7 +61,7 @@ func (s *Session) Open() error {
 		return ErrWSAlreadyOpen
 	}
 
-	sequence := atomic.LoadInt64(s.sequence)
+	sequence := s.sequence.Load()
 
 	var gateway string
 	// Get the gateway to use for the Websocket connection
@@ -246,8 +245,8 @@ func (s *Session) listen(wsConn *websocket.Conn, listening <-chan interface{}) {
 }
 
 type heartbeatOp struct {
-	Op   int   `json:"op"`
-	Data int64 `json:"d"`
+	Op   int    `json:"op"`
+	Data uint64 `json:"d"`
 }
 
 type helloOp struct {
@@ -283,7 +282,7 @@ func (s *Session) heartbeat(wsConn *websocket.Conn, listening <-chan interface{}
 		s.RLock()
 		last := s.LastHeartbeatAck
 		s.RUnlock()
-		sequence := atomic.LoadInt64(s.sequence)
+		sequence := s.sequence.Load()
 		s.log(LogDebug, "sending gateway websocket heartbeat seq %d", sequence)
 		s.wsMutex.Lock()
 		s.LastHeartbeatSent = time.Now().UTC()
@@ -523,7 +522,7 @@ func (s *Session) GatewayWriteStruct(data interface{}) (err error) {
 }
 
 func (s *Session) requestGuildMembers(data requestGuildMembersData) (err error) {
-	s.log(LogInformational, "called")
+	s.log(LogDebug, "called")
 
 	s.RLock()
 	defer s.RUnlock()
@@ -586,7 +585,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 	if e.Operation == 1 {
 		s.log(LogInformational, "sending heartbeat in response to Op1")
 		s.wsMutex.Lock()
-		err = s.wsConn.WriteJSON(heartbeatOp{1, atomic.LoadInt64(s.sequence)})
+		err = s.wsConn.WriteJSON(heartbeatOp{1, s.sequence.Load()})
 		s.wsMutex.Unlock()
 		if err != nil {
 			s.log(LogError, "error sending heartbeat in response to Op1")
@@ -621,7 +620,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 			s.log(LogInformational, "Gateway session is not resumable, discarding its information")
 			s.resumeGatewayURL = ""
 			s.sessionID = ""
-			atomic.StoreInt64(s.sequence, 0)
+			s.sequence.Store(0)
 		}
 
 		s.reconnect()
@@ -650,7 +649,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 	}
 
 	// Store the message sequence
-	atomic.StoreInt64(s.sequence, e.Sequence)
+	s.sequence.Store(e.Sequence)
 
 	// Map event to registered event handlers and pass it along to any registered handlers.
 	if eh, ok := registeredInterfaceProviders[e.Type]; ok {

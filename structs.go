@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"regexp"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -42,9 +43,6 @@ type Session struct {
 	// Should the session reconnect the websocket on errors.
 	ShouldReconnectOnError bool
 
-	// Should voice connections reconnect on a session reconnect.
-	ShouldReconnectVoiceOnSessionError bool
-
 	// Should the session retry requests when rate limited.
 	ShouldRetryOnRateLimit bool
 
@@ -55,10 +53,6 @@ type Session struct {
 	// BeforeIdentifyHook is called before sending an IDENTIFY packet.
 	// Useful for coordinating connections between multiuple clients.
 	BeforeIdentifyHook func(*Session)
-
-	// TODO: Remove Below, Deprecated, Use Identify struct
-	// Should the session request compressed websocket data.
-	Compress bool
 
 	// Sharding
 	ShardID    int
@@ -80,12 +74,6 @@ type Session struct {
 
 	// Max number of REST API retries
 	MaxRestRetries int
-
-	// Whether the Voice Websocket is ready
-	VoiceReady bool // NOTE: Deprecated.
-
-	// Whether the UDP Connection is ready
-	UDPReady bool // NOTE: Deprecated
 
 	// Managed state object, updated internally with events when
 	// StateEnabled is true.
@@ -121,7 +109,7 @@ type Session struct {
 	listening chan interface{}
 
 	// sequence tracks the current gateway api websocket sequence number
-	sequence *int64
+	sequence *atomic.Uint64
 
 	// stores sessions current Discord Resume Gateway
 	resumeGatewayURL string
@@ -799,7 +787,7 @@ type Guild struct {
 	// The number of members in the guild.
 	// This field is only present in GUILD_CREATE events and websocket
 	// update events, and thus is only present in state-cached guilds.
-	// MemberCount int `json:"member_count"`
+	MemberCount int `json:"member_count"`
 
 	// The verification level required for the guild.
 	// VerificationLevel VerificationLevel `json:"verification_level"`
