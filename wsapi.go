@@ -54,10 +54,10 @@ func (s *Session) Open() error {
 	// Prevent Open or other major Session functions from
 	// being called while Open is still running.
 	s.Lock()
-	defer s.Unlock()
 
 	// If the websock is already open, bail out here.
 	if s.wsConn != nil {
+		s.Unlock()
 		return ErrWSAlreadyOpen
 	}
 
@@ -72,6 +72,7 @@ func (s *Session) Open() error {
 		if s.gateway == "" {
 			s.gateway, err = s.Gateway()
 			if err != nil {
+				s.Unlock()
 				return err
 			}
 		}
@@ -91,20 +92,30 @@ func (s *Session) Open() error {
 		s.log(LogError, "error connecting to gateway %s, %s", s.gateway, err)
 		s.gateway = "" // clear cached gateway
 		s.wsConn = nil // Just to be safe.
+		s.Unlock()
 		return err
 	}
+
+	s.Unlock()
 
 	s.wsConn.SetCloseHandler(func(code int, text string) error {
 		return nil
 	})
 
+	return s.handleFirstPacket(sequence)
+}
+
+func (s *Session) handleFirstPacket(sequence uint64) error {
+	var err error
 	defer func() {
 		// because of this, all code below must set err to the error
 		// when exiting with an error :)  Maybe someone has a better
 		// way :)
 		if err != nil {
+			s.Lock()
 			s.wsConn.Close()
 			s.wsConn = nil
+			s.Unlock()
 		}
 	}()
 
@@ -186,7 +197,9 @@ func (s *Session) Open() error {
 	// Create listening chan outside of listen, as it needs to happen inside the
 	// mutex lock and needs to exist before calling heartbeat and listen
 	// go rountines.
+	s.Lock()
 	s.listening = make(chan interface{})
+	s.Unlock()
 
 	// Start sending heartbeats and reading messages from Discord.
 	go s.heartbeat(s.wsConn, s.listening, h.HeartbeatInterval)
