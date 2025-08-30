@@ -26,7 +26,9 @@ func (g *SessionGroup) CloseAll() {
 func (g *SessionGroup) OpenAll() error {
 	for _, s := range g.Sessions {
 		for i := 0; i < 3; i++ {
-			if err := s.Open(); err != nil {
+			if err := s.Open(); err == nil {
+				break
+			} else {
 				s.log(LogError, "failed to open shard %d (attempt %d): %s", s.ShardID, i+1, err.Error())
 				if i == 2 {
 					g.CloseAll()
