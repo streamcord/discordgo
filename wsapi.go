@@ -35,6 +35,8 @@ var ErrWSNotFound = errors.New("no websocket connection exists")
 // more than the total shard count
 var ErrWSShardBounds = errors.New("ShardID must be less than ShardCount")
 
+var ErrWSMustReconnect = errors.New("websocket must reconnect")
+
 type resumePacket struct {
 	Op   int `json:"op"`
 	Data struct {
@@ -188,12 +190,15 @@ func (s *Session) handleFirstPacket(sequence uint64) error {
 		return err
 	}
 	e, err = s.onEvent(mt, m)
-	if err != nil {
+	if err == ErrWSMustReconnect {
+		// websocket is reconnecting, stop here
+		return nil
+	} else if err != nil {
 		return err
 	}
 	if e.Type != `READY` && e.Type != `RESUMED` {
 		// This is not fatal, but it does not follow their API documentation.
-		s.log(LogWarning, "Expected READY/RESUMED, instead got:\n%#v\n", e)
+		s.log(LogWarning, "Expected READY/RESUMED, instead got %s\n", e.Type)
 	}
 	s.log(LogDebug, "First Packet:\n%#v\n", e)
 
@@ -216,7 +221,7 @@ func (s *Session) handleFirstPacket(sequence uint64) error {
 				s.reconnect()
 			}
 		}()
-		s.heartbeat(s.wsConn, s.listening, h.HeartbeatInterval)
+		s.heartbeat(s.wsConn, s.listening, h.HeartbeatInterval*time.Millisecond)
 	}()
 	go func() {
 		defer func() {
@@ -303,7 +308,7 @@ func (s *Session) HeartbeatLatency() time.Duration {
 // heartbeat sends regular heartbeats to Discord so it knows the client
 // is still connected.  If you do not send these heartbeats Discord will
 // disconnect the websocket connection after a few seconds.
-func (s *Session) heartbeat(wsConn *websocket.Conn, listening <-chan interface{}, heartbeatIntervalMsec time.Duration) {
+func (s *Session) heartbeat(wsConn *websocket.Conn, listening <-chan interface{}, interval time.Duration) {
 
 	s.log(LogInformational, "called")
 
@@ -312,7 +317,7 @@ func (s *Session) heartbeat(wsConn *websocket.Conn, listening <-chan interface{}
 	}
 
 	var err error
-	ticker := time.NewTicker(heartbeatIntervalMsec * time.Millisecond)
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for {
@@ -325,7 +330,7 @@ func (s *Session) heartbeat(wsConn *websocket.Conn, listening <-chan interface{}
 		s.LastHeartbeatSent = time.Now().UTC()
 		err = wsConn.WriteJSON(heartbeatOp{1, sequence})
 		s.wsMutex.Unlock()
-		if err != nil || time.Now().UTC().Sub(last) > (heartbeatIntervalMsec*FailedHeartbeatAcks) {
+		if err != nil || time.Now().UTC().Sub(last) > (interval*FailedHeartbeatAcks) {
 			if err != nil {
 				s.log(LogError, "error sending heartbeat to gateway %s, %s", s.gateway, err)
 			} else {
@@ -638,7 +643,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		s.log(LogInformational, "Closing and reconnecting in response to Op7")
 		s.CloseWithCode(websocket.CloseServiceRestart)
 		s.reconnect()
-		return &e, nil
+		return &e, ErrWSMustReconnect
 	}
 
 	// Invalid Session
@@ -650,6 +655,9 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		var resumable bool
 		if err := json.Unmarshal(e.RawData, &resumable); err != nil {
 			s.log(LogError, "error unmarshalling invalid session event, %s", err)
+			s.resumeGatewayURL = ""
+			s.sessionID = ""
+			s.sequence.Store(0)
 			return &e, err
 		}
 
@@ -661,7 +669,7 @@ func (s *Session) onEvent(messageType int, message []byte) (*Event, error) {
 		}
 
 		s.reconnect()
-		return &e, nil
+		return &e, ErrWSMustReconnect
 	}
 
 	if e.Operation == 10 {
