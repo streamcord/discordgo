@@ -50,6 +50,12 @@ func (s *Session) Open() error {
 	s.log(LogInformational, "called")
 
 	var err error
+	defer func() {
+		if r := recover(); r != nil {
+			s.log(LogError, "recovered from panic in Open: %+v", r)
+			err = fmt.Errorf("%+v", r)
+		}
+	}()
 
 	// Prevent Open or other major Session functions from
 	// being called while Open is still running.
@@ -202,8 +208,26 @@ func (s *Session) handleFirstPacket(sequence uint64) error {
 	s.Unlock()
 
 	// Start sending heartbeats and reading messages from Discord.
-	go s.heartbeat(s.wsConn, s.listening, h.HeartbeatInterval)
-	go s.listen(s.wsConn, s.listening)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				s.log(LogError, "recovered from panic in heartbeat: %+v", r)
+				s.CloseWithCode(websocket.CloseServiceRestart)
+				s.reconnect()
+			}
+		}()
+		s.heartbeat(s.wsConn, s.listening, h.HeartbeatInterval)
+	}()
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				s.log(LogError, "recovered from panic in listen: %+v", r)
+				s.CloseWithCode(websocket.CloseServiceRestart)
+				s.reconnect()
+			}
+		}()
+		s.listen(s.wsConn, s.listening)
+	}()
 
 	s.log(LogInformational, "exiting")
 	return nil
@@ -735,7 +759,7 @@ func (s *Session) reconnect() {
 
 	if s.ShouldReconnectOnError {
 
-		wait := time.Duration(1)
+		wait := time.Duration(1 * time.Second)
 
 		for {
 			s.log(LogInformational, "trying to reconnect to gateway")
@@ -753,12 +777,12 @@ func (s *Session) reconnect() {
 				return
 			}
 
-			s.log(LogError, "error reconnecting to gateway, %s", err)
+			s.log(LogError, "error reconnecting to gateway, %s. retrying in %s", err, wait.String())
 
-			<-time.After(wait * time.Second)
+			time.Sleep(wait)
 			wait *= 2
-			if wait > 600 {
-				wait = 600
+			if wait > 60 {
+				wait = 60
 			}
 		}
 	}

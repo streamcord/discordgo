@@ -188,6 +188,12 @@ func (s *Session) handle(t string, i interface{}) {
 // Handles an event type by calling internal methods, firing handlers and firing the
 // interface{} event.
 func (s *Session) handleEvent(t string, i interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			s.log(LogError, "recovered from panic in handleEvent: %+v", r)
+		}
+	}()
+
 	s.handlersMu.RLock()
 	defer s.handlersMu.RUnlock()
 

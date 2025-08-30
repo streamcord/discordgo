@@ -1,5 +1,7 @@
 package discordgo
 
+import "time"
+
 // SessionGroup is a helper for coordinating state between multiple Sessions.
 type SessionGroup struct {
 	Sessions []*Session
@@ -23,10 +25,15 @@ func (g *SessionGroup) CloseAll() {
 
 func (g *SessionGroup) OpenAll() error {
 	for _, s := range g.Sessions {
-		if err := s.Open(); err != nil {
-			s.log(LogError, "failed to open shard %d: %s", s.ShardID, err.Error())
-			g.CloseAll()
-			return err
+		for i := 0; i < 3; i++ {
+			if err := s.Open(); err != nil {
+				s.log(LogError, "failed to open shard %d (attempt %d): %s", s.ShardID, i+1, err.Error())
+				if i == 2 {
+					g.CloseAll()
+					return err
+				}
+				time.Sleep(5 * time.Second)
+			}
 		}
 	}
 	return nil
